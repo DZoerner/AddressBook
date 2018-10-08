@@ -17,6 +17,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
 /**
  * <p>Java-Klasse f�r Address complex type.
@@ -41,17 +42,20 @@ import javax.persistence.Id;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Address", propOrder = {
+	"id",
     "firstname",
     "lastname",
     "email"
 })
 
 @Entity
+@NamedQuery(query = "select a from Address a", name = "query_find_all_addresses")
+
 @XmlRootElement
 public class Address {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private long id;
 
     @XmlElement(required = true)
     protected String firstname;
@@ -61,8 +65,16 @@ public class Address {
     
     @XmlElement(required = true)
     protected String email;
+    
+    public long getId() {
+		return id;
+	}
 
-    /**
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	/**
      * Ruft den Wert der firstname-Eigenschaft ab.
      * 
      * @return

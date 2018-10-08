@@ -1,5 +1,7 @@
 package de.inmediasp.tutorial.addressbook.service;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,66 +14,77 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.inmediasp.tutorial.addressbook.service.persistence.AddressDao;
+import de.inmediasp.tutorial.addressbook.service.persistence.AddressRepository;
 import de.inmediasp.tutorial.addressbook.type.Address;
 import de.inmediasp.tutorial.addressbook.type.AddressList;
 
 @RestController
 public class AddressbookController {
 	@Autowired
+	private AddressRepository addressRepository;
+	
+	@Autowired
 	NamedParameterJdbcTemplate jdbcTemplate;
-
 	
 	// PUT
 	@RequestMapping(method = RequestMethod.PUT)
-	public int create(@RequestBody @Valid Address address) {
+	public long create(@RequestBody @Valid Address address) {
 
-		return new AddressDao().insert(jdbcTemplate, address);
+		return addressRepository.saveAndFlush(address).getId();
 	}
 
 	// PUT all
 	@RequestMapping(value="/all", method = RequestMethod.PUT)
 	public String createAll(@RequestBody @Valid AddressList addresses) {
 
-		return new AddressDao().intertAll(jdbcTemplate, addresses);
+		for(Address address: addresses.getAddresses()) {
+			addressRepository.saveAndFlush(address);
+		}
+		return "ok";
 	}
 
 	// POST
 	@RequestMapping(method = RequestMethod.POST)
-	public String update(
-			@RequestParam(value = "id") int id,
-			@RequestBody @Valid Address address
-			) {
+	public String update(@RequestBody @Valid Address address) {
 
-		return new AddressDao().update(jdbcTemplate, id, address);
+		addressRepository.saveAndFlush(address);
+		
+		return "ok";
 	}
 
 	// DELETE
 	@RequestMapping(method = RequestMethod.DELETE)
-	public String delete(@RequestParam(value = "id") int id) {
+	public String delete(@RequestParam(value = "id") long id) {
 
-		return new AddressDao().delete(jdbcTemplate, id);
+		addressRepository.delete(id);
+		
+		return "ok";
 	}
 
 	// DELETE
 	@RequestMapping(value="/all", method = RequestMethod.DELETE)
 	public String deleteAll() {
 
-		return new AddressDao().deleteAll(jdbcTemplate);
+		addressRepository.deleteAll();
+
+		return "ok";
 	}
 
 	// GET single
 	@RequestMapping(method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
 	@ResponseBody
-	public Address get(@RequestParam(value = "id") int id) {
+	public Address get(@RequestParam(value = "id") long id) {
 
-		return new AddressDao().get(jdbcTemplate, id);
+		return addressRepository.findOne(id);
 	}
 
 	// GET all
 	@RequestMapping(value="/all", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
 	@ResponseBody
 	public AddressList getAll() {
-		return new AddressDao().getAll(jdbcTemplate);
+		List<Address> addresses= addressRepository.findAll();
+		
+		return new AddressList(addresses);
 	}
 
 	// FIND filtered

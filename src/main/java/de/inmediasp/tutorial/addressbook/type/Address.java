@@ -5,7 +5,6 @@
 // Generiert: 2018.10.02 um 03:35:52 PM CEST 
 //
 
-
 package de.inmediasp.tutorial.addressbook.type;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -14,6 +13,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * <p>Java-Klasse f�r Address complex type.
@@ -43,13 +46,19 @@ import javax.xml.bind.annotation.XmlType;
     "email"
 })
 
+@Entity
 @XmlRootElement
 public class Address {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
     @XmlElement(required = true)
     protected String firstname;
+    
     @XmlElement(required = true)
     protected String lastname;
+    
     @XmlElement(required = true)
     protected String email;
 
@@ -124,5 +133,4 @@ public class Address {
     public void setEmail(String value) {
         this.email = value;
     }
-
 }

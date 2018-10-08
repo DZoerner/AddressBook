@@ -19,5 +19,4 @@ public class AddressRowMaper implements RowMapper<Address>{
 
 		return ret;
 	}
-
 }

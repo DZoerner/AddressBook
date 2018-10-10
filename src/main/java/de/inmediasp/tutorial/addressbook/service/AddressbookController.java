@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -80,8 +81,19 @@ public class AddressbookController {
 
 	// GET all
 	@RequestMapping(value="/all", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
+    @CrossOrigin(origins = "http://localhost:8090")
 	@ResponseBody
 	public AddressList getAll() {
+		List<Address> addresses= addressRepository.findAll();
+		
+		return new AddressList(addresses);
+	}
+
+	// GET all json
+	@RequestMapping(value="/all", method = RequestMethod.GET, produces = { "application/json", "text/json" })
+    @CrossOrigin(origins = "http://localhost:8090")
+	@ResponseBody
+	public AddressList getAllJson() {
 		List<Address> addresses= addressRepository.findAll();
 		
 		return new AddressList(addresses);

@@ -79,6 +79,15 @@ public class AddressbookController {
 		return addressRepository.findOne(id);
 	}
 
+	// GET single
+	@RequestMapping(method = RequestMethod.GET, produces = { "application/json", "text/json" })
+    @CrossOrigin(origins = "http://localhost:8090")
+	@ResponseBody
+	public Address getJson(@RequestParam(value = "id") long id) {
+
+		return addressRepository.findOne(id);
+	}
+
 	// GET all
 	@RequestMapping(value="/all", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
     @CrossOrigin(origins = "http://localhost:8090")

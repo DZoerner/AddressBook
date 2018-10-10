@@ -102,7 +102,7 @@ public class AddrTests {
    
    @Test
    public void getAddresses() throws Exception {
-      String uri = "/all";
+      String uri = "/";
       MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).
          accept(MediaType.TEXT_XML)).andReturn();
       

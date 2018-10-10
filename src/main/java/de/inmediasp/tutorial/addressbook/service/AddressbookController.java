@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,8 +55,8 @@ public class AddressbookController {
 	}
 
 	// DELETE
-	@RequestMapping(method = RequestMethod.DELETE)
-	public String delete(@RequestParam(value = "id") long id) {
+	@RequestMapping(value="/{id}", method = RequestMethod.DELETE)
+	public String delete(@PathVariable(value = "id") long id) {
 
 		addressRepository.delete(id);
 		
@@ -63,7 +64,7 @@ public class AddressbookController {
 	}
 
 	// DELETE
-	@RequestMapping(value="/all", method = RequestMethod.DELETE)
+	@RequestMapping(value="/", method = RequestMethod.DELETE)
 	public String deleteAll() {
 
 		addressRepository.deleteAll();
@@ -72,24 +73,24 @@ public class AddressbookController {
 	}
 
 	// GET single
-	@RequestMapping(method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
+	@RequestMapping(value="/{id}", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
 	@ResponseBody
-	public Address get(@RequestParam(value = "id") long id) {
+	public Address get(@PathVariable(value = "id") long id) {
 
 		return addressRepository.findOne(id);
 	}
 
 	// GET single
-	@RequestMapping(method = RequestMethod.GET, produces = { "application/json", "text/json" })
+	@RequestMapping(value="/{id}", method = RequestMethod.GET, produces = { "application/json", "text/json" })
     @CrossOrigin(origins = "http://localhost:8090")
 	@ResponseBody
-	public Address getJson(@RequestParam(value = "id") long id) {
+	public Address getJson(@PathVariable(value = "id") long id) {
 
 		return addressRepository.findOne(id);
 	}
 
 	// GET all
-	@RequestMapping(value="/all", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
+	@RequestMapping(value="/", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
     @CrossOrigin(origins = "http://localhost:8090")
 	@ResponseBody
 	public AddressList getAll() {
@@ -99,7 +100,7 @@ public class AddressbookController {
 	}
 
 	// GET all json
-	@RequestMapping(value="/all", method = RequestMethod.GET, produces = { "application/json", "text/json" })
+	@RequestMapping(value="/", method = RequestMethod.GET, produces = { "application/json", "text/json" })
     @CrossOrigin(origins = "http://localhost:8090")
 	@ResponseBody
 	public AddressList getAllJson() {

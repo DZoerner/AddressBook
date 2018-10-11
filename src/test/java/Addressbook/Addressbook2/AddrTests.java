@@ -20,6 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import de.inmediasp.tutorial.addressbook.service.App;
+import de.inmediasp.tutorial.addressbook.type.Address;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = App.class)
@@ -113,14 +114,18 @@ public class AddrTests {
 
    @Test
    public void getFilteredAddresses() throws Exception {
-	   getFilteredAddresses("firstname", "Max");
-	   getFilteredAddresses("lastname", "Rotkohl");
-	   getFilteredAddresses("email", "hrotk@gmail.com");
+	   String searchAddressXml= "<address>\r\n" + 
+	     		"	<firstname>Helmut</firstname>\r\n" + 
+	     		"	<lastname></lastname>\r\n" + 
+	     		"	<email></email>\r\n" + 
+	     		"</address>";
+
+	   getFilteredAddresses(searchAddressXml);
    }
 
-   private void getFilteredAddresses(String attr, String  val) throws Exception {
+   private void getFilteredAddresses(String xml) throws Exception {
       String uri = "/search";
-      ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).param(attr, val).
+      ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri).content(xml).contentType(MediaType.APPLICATION_XML).
          accept(MediaType.TEXT_XML));
       
       mvcResult.andExpect(status().isOk());

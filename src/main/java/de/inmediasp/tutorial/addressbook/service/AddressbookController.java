@@ -29,7 +29,7 @@ public class AddressbookController {
 	NamedParameterJdbcTemplate jdbcTemplate;
 	
 	// PUT
-	@RequestMapping(method = RequestMethod.PUT)
+	@RequestMapping(value="/", method = RequestMethod.PUT)
 	public long create(@RequestBody @Valid Address address) {
 
 		return addressRepository.saveAndFlush(address).getId();
@@ -46,7 +46,7 @@ public class AddressbookController {
 	}
 
 	// POST
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value="/", method = RequestMethod.POST)
 	public String update(@RequestBody @Valid Address address) {
 
 		addressRepository.saveAndFlush(address);
@@ -110,14 +110,10 @@ public class AddressbookController {
 	}
 
 	// FIND filtered
-	@RequestMapping(value="/search", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
+	@RequestMapping(value="/search", method = RequestMethod.POST, produces = { "application/xml", "text/xml" })
 	@ResponseBody
-	public AddressList getFiltered(
-			@RequestParam(value = "firstname", required=false) String firstname,
-			@RequestParam(value = "lastname", required=false) String lastname,
-			@RequestParam(value = "email", required=false) String email
-			) {
+	public AddressList getFiltered(@RequestBody @Valid Address address) {
 		
-		return new AddressDao().getFiltered(jdbcTemplate, firstname, lastname, email);
+		return new AddressDao().getFiltered(jdbcTemplate, address.getFirstname(), address.getLastname(), address.getEmail());
 	}
 }

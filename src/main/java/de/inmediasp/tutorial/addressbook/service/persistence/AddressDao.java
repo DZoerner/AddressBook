@@ -13,6 +13,16 @@ public class AddressDao {
 			String lastname,
 			String email
 			) {
+		
+		if(firstname.length() == 0) {
+			firstname= null;
+		}
+		if(lastname.length() == 0) {
+			lastname= null;
+		}
+		if(email.length() == 0) {
+			email= null;
+		}
 
 		String sql= select_filtered_sql;
 		MapSqlParameterSource parameter= new MapSqlParameterSource();

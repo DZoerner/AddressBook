@@ -1,4 +1,4 @@
-package de.inmediasp.tutorial.addressbook.service;
+package de.inmediasp.tutorial.addressbook.service.controller;
 
 import java.util.List;
 

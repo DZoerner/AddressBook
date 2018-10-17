@@ -27,15 +27,15 @@ public class AddressbookController {
 	@Autowired
 	NamedParameterJdbcTemplate jdbcTemplate;
 	
-	// PUT
-	@RequestMapping(value="/", method = RequestMethod.PUT)
+	// create single
+	@RequestMapping(value="/", method = RequestMethod.POST)
 	public long create(@RequestBody @Valid Address address) {
 
 		return addressRepository.saveAndFlush(address).getId();
 	}
 
-	// PUT all
-	@RequestMapping(value="/all", method = RequestMethod.PUT)
+	// create all
+	@RequestMapping(value="/all", method = RequestMethod.POST)
 	public String createAll(@RequestBody @Valid AddressList addresses) {
 
 		for(Address address: addresses.getAddresses()) {
@@ -44,8 +44,8 @@ public class AddressbookController {
 		return "ok";
 	}
 
-	// POST
-	@RequestMapping(value="/", method = RequestMethod.POST)
+	// update
+	@RequestMapping(value="/", method = RequestMethod.PUT)
 	public String update(@RequestBody @Valid Address address) {
 
 		addressRepository.saveAndFlush(address);

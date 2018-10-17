@@ -43,15 +43,16 @@ public class AddrTests {
 	@Test
 	public void deleteAddress() throws Exception {
 
-		final ResultActions mvcResult = mvc
-				.perform(MockMvcRequestBuilders.put(uri).content(addressXml).contentType(MediaType.APPLICATION_XML));
-
-		mvcResult.andExpect(status().isOk());
-
 		//test 404 on not present resources
 		String u= uri + "0";
 		ResultActions mvcResult2 = mvc.perform(MockMvcRequestBuilders.delete(u));
 		mvcResult2.andExpect(status().isNotFound());
+
+		// Create sample value for delete-test
+		final ResultActions mvcResult = mvc
+				.perform(MockMvcRequestBuilders.post(uri).content(addressXml).contentType(MediaType.APPLICATION_XML));
+
+		mvcResult.andExpect(status().isOk());
 
 		mvcResult.andDo(new ResultHandler() {
 
@@ -67,17 +68,18 @@ public class AddrTests {
 	}
 
 	@Test
-	public void createAddress() throws Exception {
-		ResultActions mvcResult = mvc
-				.perform(MockMvcRequestBuilders.put(uri).content(addressXml).contentType(MediaType.APPLICATION_XML));
+	public void updateAddress() throws Exception {
+		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri).param("id", "12").content(addressXml)
+				.contentType(MediaType.APPLICATION_XML));
 
 		mvcResult.andExpect(status().isOk());
 	}
 
+
 	@Test
-	public void updateAddress() throws Exception {
-		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri).param("id", "12").content(addressXml)
-				.contentType(MediaType.APPLICATION_XML));
+	public void createAddress() throws Exception {
+		ResultActions mvcResult = mvc
+				.perform(MockMvcRequestBuilders.post(uri).content(addressXml).contentType(MediaType.APPLICATION_XML));
 
 		mvcResult.andExpect(status().isOk());
 	}
@@ -88,7 +90,7 @@ public class AddrTests {
 		String xml = "<addressList>" + addressXml + "</addressList>";
 
 		ResultActions mvcResult = mvc
-				.perform(MockMvcRequestBuilders.put(u).content(xml).contentType(MediaType.APPLICATION_XML));
+				.perform(MockMvcRequestBuilders.post(u).content(xml).contentType(MediaType.APPLICATION_XML));
 
 		mvcResult.andExpect(status().isOk());
 	}

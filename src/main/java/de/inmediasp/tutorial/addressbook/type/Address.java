@@ -7,17 +7,13 @@
 
 package de.inmediasp.tutorial.addressbook.type;
 
+import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
 
 /**
  * <p>Java-Klasse f�r Address complex type.
@@ -42,7 +38,6 @@ import javax.persistence.NamedQuery;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Address", propOrder = {
-	"id",
     "firstname",
     "lastname",
     "email"
@@ -52,11 +47,7 @@ import javax.persistence.NamedQuery;
 @NamedQuery(query = "select a from Address a", name = "query_find_all_addresses")
 
 @XmlRootElement
-public class Address {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
-
+public class Address extends BaseEntity {
     @XmlElement(required = true)
     protected String firstname;
     
@@ -66,14 +57,6 @@ public class Address {
     @XmlElement(required = true)
     protected String email;
     
-    public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
 	/**
      * Ruft den Wert der firstname-Eigenschaft ab.
      * 

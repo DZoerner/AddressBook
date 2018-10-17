@@ -1,6 +1,6 @@
-package Addressbook.Addressbook2;
+package de.inmediasp.tutorial.addressbook.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.core.StringContains.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -20,9 +19,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import de.inmediasp.test.ordering.OrderedJRunner;
+import de.inmediasp.test.ordering.TestFirst;
+import de.inmediasp.test.ordering.TestLast;
 import de.inmediasp.tutorial.addressbook.service.App;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(OrderedJRunner.class)
 @SpringBootTest(classes = App.class)
 @WebAppConfiguration
 public class AddrTests {
@@ -41,7 +43,7 @@ public class AddrTests {
 			+ "	<lastname>Rotkohl</lastname>\r\n" + "	<email>hrotk@gmail.com</email>\r\n" + "</address>";
 
 	@Test
-	public void deleteAddress() throws Exception {
+	public void testDeleteAddress() throws Exception {
 
 		//test 404 on not present resources
 		String u= uri + "0";
@@ -68,7 +70,17 @@ public class AddrTests {
 	}
 
 	@Test
-	public void updateAddress() throws Exception {
+	@TestLast
+	public void testDeleteAddresses() throws Exception {
+
+		//test 404 on not present resources
+		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri));
+		mvcResult.andExpect(status().isOk());
+
+	}
+
+	@Test
+	public void testUpdateAddress() throws Exception {
 		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri).param("id", "12").content(addressXml)
 				.contentType(MediaType.APPLICATION_XML));
 
@@ -77,7 +89,8 @@ public class AddrTests {
 
 
 	@Test
-	public void createAddress() throws Exception {
+	@TestFirst
+	public void testCreateAddress() throws Exception {
 		ResultActions mvcResult = mvc
 				.perform(MockMvcRequestBuilders.post(uri).content(addressXml).contentType(MediaType.APPLICATION_XML));
 
@@ -85,7 +98,8 @@ public class AddrTests {
 	}
 
 	@Test
-	public void createAddresses() throws Exception {
+	@TestFirst
+	public void testCreateAddresses() throws Exception {
 		String u = uri + "all";
 		String xml = "<addressList>" + addressXml + "</addressList>";
 
@@ -96,28 +110,35 @@ public class AddrTests {
 	}
 
 	@Test
-	public void getAddress() throws Exception {
-		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).param("id", "6").accept(MediaType.TEXT_XML))
-				.andReturn();
+	public void testGetAddress() throws Exception {
+		String u= uri + "1";
+		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.get(u).accept(MediaType.TEXT_XML));
 
-		int status = mvcResult.getResponse().getStatus();
-
-		assertEquals(200, status);
+		mvcResult.andExpect(content().contentType("text/xml"));
+		mvcResult.andExpect(content().string(containsString("Helmut")));
+		mvcResult.andExpect(status().isOk());
 	}
 
 	@Test
-	public void getAddresses() throws Exception {
-		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).accept(MediaType.TEXT_XML)).andReturn();
+	public void testGetAddresses() throws Exception {
+		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).accept(MediaType.TEXT_XML));
 
-		int status = mvcResult.getResponse().getStatus();
-
-		assertEquals(200, status);
+		mvcResult.andExpect(content().contentType("text/xml"));
+		mvcResult.andExpect(content().string(containsString("Helmut")));
+		mvcResult.andExpect(status().isOk());
 	}
 
 	@Test
-	public void getFilteredAddresses() throws Exception {
-		String searchAddressXml = "<address>\r\n" + "	<firstname>Helmut</firstname>\r\n"
-				+ "	<lastname></lastname>\r\n" + "	<email></email>\r\n" + "</address>";
+	public void testGetFilteredAddresses() throws Exception {
+
+		getFilteredAddresses("firstname", "Helmut");
+		getFilteredAddresses("lastname", "Rotkohl");
+		getFilteredAddresses("email", "hrotk@gmail.com");
+	}
+
+	private void getFilteredAddresses(String attr, String value) throws Exception {
+		String searchAddressXml = "<address>\r\n" + "	<" + attr + ">" + value + "</" + attr + ">\r\n"
+				+ "</address>";
 
 		getFilteredAddresses(searchAddressXml);
 	}
@@ -129,5 +150,6 @@ public class AddrTests {
 
 		mvcResult.andExpect(status().isOk());
 		mvcResult.andExpect(content().contentType("text/xml"));
+		mvcResult.andExpect(content().string(containsString("Helmut")));
 	}
 }

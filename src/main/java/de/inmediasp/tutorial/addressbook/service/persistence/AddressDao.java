@@ -14,13 +14,13 @@ public class AddressDao {
 			String email
 			) {
 		
-		if(firstname.length() == 0) {
+		if(firstname != null && firstname.length() == 0) {
 			firstname= null;
 		}
-		if(lastname.length() == 0) {
+		if(lastname != null && lastname.length() == 0) {
 			lastname= null;
 		}
-		if(email.length() == 0) {
+		if(email != null && email.length() == 0) {
 			email= null;
 		}
 

@@ -26,109 +26,106 @@ import de.inmediasp.tutorial.addressbook.service.App;
 @SpringBootTest(classes = App.class)
 @WebAppConfiguration
 public class AddrTests {
-   protected MockMvc mvc;
-   @Autowired
-   WebApplicationContext webApplicationContext;
+	private static final String uri = "/";
+	
+	protected MockMvc mvc;
+	@Autowired
+	WebApplicationContext webApplicationContext;
 
-   @Before
-   public void setUp() {
-      mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-   }
+	@Before
+	public void setUp() {
+		mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+	}
 
-   static String addressXml= "<address>\r\n" + 
-     		"	<firstname>Helmut</firstname>\r\n" + 
-     		"	<lastname>Rotkohl</lastname>\r\n" + 
-     		"	<email>hrotk@gmail.com</email>\r\n" + 
-     		"</address>";
+	static String addressXml = "<address>\r\n" + "	<firstname>Helmut</firstname>\r\n"
+			+ "	<lastname>Rotkohl</lastname>\r\n" + "	<email>hrotk@gmail.com</email>\r\n" + "</address>";
 
-   @Test
-   public void deleteAddress() throws Exception {
-      final String uri = "/";
-  
-       
-      final ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri).content(addressXml).contentType(MediaType.APPLICATION_XML));
-      
-      mvcResult.andExpect(status().isOk());
-      mvcResult.andDo(new ResultHandler() {
-		
-		@Override
-		public void handle(MvcResult result) throws Exception {
-				String id= result.getResponse().getContentAsString();
-			
-				ResultActions mvcResult2 = mvc.perform(MockMvcRequestBuilders.delete(uri).param("id", id));
-		       
-		       mvcResult2.andExpect(status().isOk());
-		}
-	});
-   }
+	@Test
+	public void deleteAddress() throws Exception {
 
-   @Test
-   public void createAddress() throws Exception {
-      String uri = "/";
-      
-      ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri).content(addressXml).contentType(MediaType.APPLICATION_XML));
-      
-      mvcResult.andExpect(status().isOk());
-   }
+		final ResultActions mvcResult = mvc
+				.perform(MockMvcRequestBuilders.put(uri).content(addressXml).contentType(MediaType.APPLICATION_XML));
 
-   @Test
-   public void updateAddress() throws Exception {
-      String uri = "/";
-      
-      ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri).param("id", "12").content(addressXml).contentType(MediaType.APPLICATION_XML));
-      
-      mvcResult.andExpect(status().isOk());
-   }
+		mvcResult.andExpect(status().isOk());
 
-   @Test
-   public void createAddresses() throws Exception {
-      String uri = "/all";
-      String xml= "<addressList>" + addressXml + "</addressList>";
-      
-      ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri).content(xml).contentType(MediaType.APPLICATION_XML));
-      
-      mvcResult.andExpect(status().isOk());
-   }
+		//test 404 on not present resources
+		String u= uri + "0";
+		ResultActions mvcResult2 = mvc.perform(MockMvcRequestBuilders.delete(u));
+		mvcResult2.andExpect(status().isNotFound());
 
-   @Test
-   public void getAddress() throws Exception {
-      String uri = "/";
-      MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).param("id", "6")
-         .accept(MediaType.TEXT_XML)).andReturn();
-      
-      int status = mvcResult.getResponse().getStatus();
-      
-      assertEquals(200, status);
-   }
-   
-   @Test
-   public void getAddresses() throws Exception {
-      String uri = "/";
-      MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).
-         accept(MediaType.TEXT_XML)).andReturn();
-      
-      int status = mvcResult.getResponse().getStatus();
-      
-      assertEquals(200, status);
-   }
+		mvcResult.andDo(new ResultHandler() {
 
-   @Test
-   public void getFilteredAddresses() throws Exception {
-	   String searchAddressXml= "<address>\r\n" + 
-	     		"	<firstname>Helmut</firstname>\r\n" + 
-	     		"	<lastname></lastname>\r\n" + 
-	     		"	<email></email>\r\n" + 
-	     		"</address>";
+			@Override
+			public void handle(MvcResult result) throws Exception {
+				String id = result.getResponse().getContentAsString();
+				String u= uri + id;
+				ResultActions mvcResult2 = mvc.perform(MockMvcRequestBuilders.delete(u));
 
-	   getFilteredAddresses(searchAddressXml);
-   }
+				mvcResult2.andExpect(status().isOk());
+			}
+		});
+	}
 
-   private void getFilteredAddresses(String xml) throws Exception {
-      String uri = "/search";
-      ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri).content(xml).contentType(MediaType.APPLICATION_XML).
-         accept(MediaType.TEXT_XML));
-      
-      mvcResult.andExpect(status().isOk());
-      mvcResult.andExpect(content().contentType("text/xml"));
-   }
+	@Test
+	public void createAddress() throws Exception {
+		ResultActions mvcResult = mvc
+				.perform(MockMvcRequestBuilders.put(uri).content(addressXml).contentType(MediaType.APPLICATION_XML));
+
+		mvcResult.andExpect(status().isOk());
+	}
+
+	@Test
+	public void updateAddress() throws Exception {
+		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri).param("id", "12").content(addressXml)
+				.contentType(MediaType.APPLICATION_XML));
+
+		mvcResult.andExpect(status().isOk());
+	}
+
+	@Test
+	public void createAddresses() throws Exception {
+		String u = uri + "all";
+		String xml = "<addressList>" + addressXml + "</addressList>";
+
+		ResultActions mvcResult = mvc
+				.perform(MockMvcRequestBuilders.put(u).content(xml).contentType(MediaType.APPLICATION_XML));
+
+		mvcResult.andExpect(status().isOk());
+	}
+
+	@Test
+	public void getAddress() throws Exception {
+		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).param("id", "6").accept(MediaType.TEXT_XML))
+				.andReturn();
+
+		int status = mvcResult.getResponse().getStatus();
+
+		assertEquals(200, status);
+	}
+
+	@Test
+	public void getAddresses() throws Exception {
+		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).accept(MediaType.TEXT_XML)).andReturn();
+
+		int status = mvcResult.getResponse().getStatus();
+
+		assertEquals(200, status);
+	}
+
+	@Test
+	public void getFilteredAddresses() throws Exception {
+		String searchAddressXml = "<address>\r\n" + "	<firstname>Helmut</firstname>\r\n"
+				+ "	<lastname></lastname>\r\n" + "	<email></email>\r\n" + "</address>";
+
+		getFilteredAddresses(searchAddressXml);
+	}
+
+	private void getFilteredAddresses(String xml) throws Exception {
+		String u = uri + "search";
+		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.post(u).content(xml)
+				.contentType(MediaType.APPLICATION_XML).accept(MediaType.TEXT_XML));
+
+		mvcResult.andExpect(status().isOk());
+		mvcResult.andExpect(content().contentType("text/xml"));
+	}
 }

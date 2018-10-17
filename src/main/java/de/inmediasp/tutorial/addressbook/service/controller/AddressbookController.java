@@ -56,7 +56,10 @@ public class AddressbookController {
 	// DELETE
 	@RequestMapping(value="/{id}", method = RequestMethod.DELETE)
 	public String delete(@PathVariable(value = "id") long id) {
-
+		if(!addressRepository.exists(id)) {
+			throw new ResourceNotFoundException(id);
+		}
+		
 		addressRepository.delete(id);
 		
 		return "ok";

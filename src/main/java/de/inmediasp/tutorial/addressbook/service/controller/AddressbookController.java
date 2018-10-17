@@ -53,7 +53,7 @@ public class AddressbookController {
 		return "ok";
 	}
 
-	// DELETE
+	// delete
 	@RequestMapping(value="/{id}", method = RequestMethod.DELETE)
 	public String delete(@PathVariable(value = "id") long id) {
 		if(!addressRepository.exists(id)) {
@@ -65,7 +65,7 @@ public class AddressbookController {
 		return "ok";
 	}
 
-	// DELETE
+	// delete all
 	@RequestMapping(value="/", method = RequestMethod.DELETE)
 	public String deleteAll() {
 
@@ -74,7 +74,7 @@ public class AddressbookController {
 		return "ok";
 	}
 
-	// GET single
+	// get single xml
 	@RequestMapping(value="/{id}", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
 	@ResponseBody
 	public Address get(@PathVariable(value = "id") long id) {
@@ -82,7 +82,7 @@ public class AddressbookController {
 		return addressRepository.findOne(id);
 	}
 
-	// GET single
+	// get single json
 	@RequestMapping(value="/{id}", method = RequestMethod.GET, produces = { "application/json", "text/json" })
     @CrossOrigin(origins = "http://localhost:8090")
 	@ResponseBody
@@ -91,7 +91,7 @@ public class AddressbookController {
 		return addressRepository.findOne(id);
 	}
 
-	// GET all
+	// get all json
 	@RequestMapping(value="/", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
     @CrossOrigin(origins = "http://localhost:8090")
 	@ResponseBody
@@ -101,7 +101,7 @@ public class AddressbookController {
 		return new AddressList(addresses);
 	}
 
-	// GET all json
+	// get all json
 	@RequestMapping(value="/", method = RequestMethod.GET, produces = { "application/json", "text/json" })
     @CrossOrigin(origins = "http://localhost:8090")
 	@ResponseBody
@@ -111,7 +111,7 @@ public class AddressbookController {
 		return new AddressList(addresses);
 	}
 
-	// FIND filtered
+	// find filtered
 	@RequestMapping(value="/search", method = RequestMethod.POST, produces = { "application/xml", "text/xml" })
 	@ResponseBody
 	public AddressList getFiltered(@RequestBody @Valid Address address) {

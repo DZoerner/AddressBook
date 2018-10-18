@@ -29,14 +29,14 @@ public class AddressbookController {
 	NamedParameterJdbcTemplate jdbcTemplate;
 	
 	// create single
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST, headers="type=address")
 	public long create(@RequestBody @Valid Address address) {
 
 		return addressRepository.saveAndFlush(address).getId();
 	}
 
 	// create all
-	@RequestMapping(value="/all", method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST, headers="type=addresslist")
 	public String createAll(@RequestBody @Valid AddressList addresses) {
 
 		for(Address address: addresses.getAddresses()) {
@@ -46,7 +46,7 @@ public class AddressbookController {
 	}
 
 	// update
-	@RequestMapping(value="/", method = RequestMethod.PUT)
+	@RequestMapping(method = RequestMethod.PUT)
 	public String update(@RequestBody @Valid Address address) {
 
 		addressRepository.saveAndFlush(address);
@@ -55,7 +55,7 @@ public class AddressbookController {
 	}
 
 	// delete
-	@RequestMapping(value="/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value="{id}", method = RequestMethod.DELETE)
 	public String delete(@PathVariable(value = "id") long id) {
 		if(!addressRepository.exists(id)) {
 			throw new ResourceNotFoundException(id);
@@ -67,7 +67,7 @@ public class AddressbookController {
 	}
 
 	// delete all
-	@RequestMapping(value="/", method = RequestMethod.DELETE)
+	@RequestMapping(method = RequestMethod.DELETE)
 	public String deleteAll() {
 
 		addressRepository.deleteAll();
@@ -76,7 +76,7 @@ public class AddressbookController {
 	}
 
 	// get single xml
-	@RequestMapping(value="/{id}", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
+	@RequestMapping(value="{id}", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
 	@ResponseBody
 	public Address get(@PathVariable(value = "id") long id) {
 
@@ -84,7 +84,7 @@ public class AddressbookController {
 	}
 
 	// get single json
-	@RequestMapping(value="/{id}", method = RequestMethod.GET, produces = { "application/json", "text/json" })
+	@RequestMapping(value="{id}", method = RequestMethod.GET, produces = { "application/json", "text/json" })
     @CrossOrigin(origins = "http://localhost:8090")
 	@ResponseBody
 	public Address getJson(@PathVariable(value = "id") long id) {

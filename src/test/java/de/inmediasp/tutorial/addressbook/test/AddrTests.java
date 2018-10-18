@@ -52,7 +52,7 @@ public class AddrTests {
 
 		// Create sample value for delete-test
 		final ResultActions mvcResult = mvc
-				.perform(MockMvcRequestBuilders.post(uri).content(addressXml).contentType(MediaType.APPLICATION_XML));
+				.perform(MockMvcRequestBuilders.post(uri).header("type", "address").content(addressXml).contentType(MediaType.APPLICATION_XML));
 
 		mvcResult.andExpect(status().isOk());
 
@@ -92,7 +92,7 @@ public class AddrTests {
 	@TestFirst
 	public void testCreateAddress() throws Exception {
 		ResultActions mvcResult = mvc
-				.perform(MockMvcRequestBuilders.post(uri).content(addressXml).contentType(MediaType.APPLICATION_XML));
+				.perform(MockMvcRequestBuilders.post(uri).content(addressXml).header("type", "address").contentType(MediaType.APPLICATION_XML));
 
 		mvcResult.andExpect(status().isOk());
 	}
@@ -100,11 +100,10 @@ public class AddrTests {
 	@Test
 	@TestFirst
 	public void testCreateAddresses() throws Exception {
-		String u = uri + "all";
 		String xml = "<addressList>" + addressXml + "</addressList>";
 
 		ResultActions mvcResult = mvc
-				.perform(MockMvcRequestBuilders.post(u).content(xml).contentType(MediaType.APPLICATION_XML));
+				.perform(MockMvcRequestBuilders.post(uri).content(xml).header("type", "addresslist").contentType(MediaType.APPLICATION_XML));
 
 		mvcResult.andExpect(status().isOk());
 	}

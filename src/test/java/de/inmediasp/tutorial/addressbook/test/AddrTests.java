@@ -28,7 +28,7 @@ import de.inmediasp.tutorial.addressbook.service.App;
 @SpringBootTest(classes = App.class)
 @WebAppConfiguration
 public class AddrTests {
-	private static final String uri = "/";
+	private static final String uri = "/addresses/";
 	
 	protected MockMvc mvc;
 	@Autowired

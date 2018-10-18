@@ -20,6 +20,7 @@ import de.inmediasp.tutorial.addressbook.type.Address;
 import de.inmediasp.tutorial.addressbook.type.AddressList;
 
 @RestController
+@RequestMapping("addresses")
 public class AddressbookController {
 	@Autowired
 	private AddressRepository addressRepository;
@@ -28,7 +29,7 @@ public class AddressbookController {
 	NamedParameterJdbcTemplate jdbcTemplate;
 	
 	// create single
-	@RequestMapping(value="/", method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST)
 	public long create(@RequestBody @Valid Address address) {
 
 		return addressRepository.saveAndFlush(address).getId();
@@ -92,7 +93,7 @@ public class AddressbookController {
 	}
 
 	// get all json
-	@RequestMapping(value="/", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
+	@RequestMapping(method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
     @CrossOrigin(origins = "http://localhost:8090")
 	@ResponseBody
 	public AddressList getAll() {
@@ -102,7 +103,7 @@ public class AddressbookController {
 	}
 
 	// get all json
-	@RequestMapping(value="/", method = RequestMethod.GET, produces = { "application/json", "text/json" })
+	@RequestMapping(method = RequestMethod.GET, produces = { "application/json", "text/json" })
     @CrossOrigin(origins = "http://localhost:8090")
 	@ResponseBody
 	public AddressList getAllJson() {

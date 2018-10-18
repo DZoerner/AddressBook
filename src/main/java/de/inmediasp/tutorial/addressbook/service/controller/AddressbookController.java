@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -113,10 +114,14 @@ public class AddressbookController {
 	}
 
 	// find filtered
-	@RequestMapping(value="/search", method = RequestMethod.POST, produces = { "application/xml", "text/xml" })
+	@RequestMapping(value="/", method = RequestMethod.GET, produces = { "application/xml", "text/xml" })
 	@ResponseBody
-	public AddressList getFiltered(@RequestBody @Valid Address address) {
+	public AddressList getFiltered(
+			@RequestParam(value = "firstname", required=false) String firstname,
+			@RequestParam(value = "lastname",  required=false) String lastname,
+			@RequestParam(value = "email",     required=false) String email
+			) {
 		
-		return new AddressDao().getFiltered(jdbcTemplate, address.getFirstname(), address.getLastname(), address.getEmail());
+		return new AddressDao().getFiltered(jdbcTemplate, firstname, lastname, email);
 	}
 }

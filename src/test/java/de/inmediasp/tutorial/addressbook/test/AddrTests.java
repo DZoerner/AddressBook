@@ -29,7 +29,7 @@ import de.inmediasp.tutorial.addressbook.service.App;
 @WebAppConfiguration
 public class AddrTests {
 	private static final String uri = "/addresses/";
-	
+
 	protected MockMvc mvc;
 	@Autowired
 	WebApplicationContext webApplicationContext;
@@ -45,14 +45,14 @@ public class AddrTests {
 	@Test
 	public void testDeleteAddress() throws Exception {
 
-		//test 404 on not present resources
-		String u= uri + "0";
+		// test 404 on not present resources
+		String u = uri + "0";
 		ResultActions mvcResult2 = mvc.perform(MockMvcRequestBuilders.delete(u));
 		mvcResult2.andExpect(status().isNotFound());
 
 		// Create sample value for delete-test
-		final ResultActions mvcResult = mvc
-				.perform(MockMvcRequestBuilders.post(uri).header("type", "address").content(addressXml).contentType(MediaType.APPLICATION_XML));
+		final ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri).header("type", "address")
+				.content(addressXml).contentType(MediaType.APPLICATION_XML));
 
 		mvcResult.andExpect(status().isOk());
 
@@ -61,7 +61,7 @@ public class AddrTests {
 			@Override
 			public void handle(MvcResult result) throws Exception {
 				String id = result.getResponse().getContentAsString();
-				String u= uri + id;
+				String u = uri + id;
 				ResultActions mvcResult2 = mvc.perform(MockMvcRequestBuilders.delete(u));
 
 				mvcResult2.andExpect(status().isOk());
@@ -73,7 +73,7 @@ public class AddrTests {
 	@TestLast
 	public void testDeleteAddresses() throws Exception {
 
-		//test 404 on not present resources
+		// test 404 on not present resources
 		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.delete(uri));
 		mvcResult.andExpect(status().isOk());
 
@@ -87,12 +87,11 @@ public class AddrTests {
 		mvcResult.andExpect(status().isOk());
 	}
 
-
 	@Test
 	@TestFirst
 	public void testCreateAddress() throws Exception {
-		ResultActions mvcResult = mvc
-				.perform(MockMvcRequestBuilders.post(uri).content(addressXml).header("type", "address").contentType(MediaType.APPLICATION_XML));
+		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri).content(addressXml)
+				.header("type", "address").contentType(MediaType.APPLICATION_XML));
 
 		mvcResult.andExpect(status().isOk());
 	}
@@ -102,15 +101,15 @@ public class AddrTests {
 	public void testCreateAddresses() throws Exception {
 		String xml = "<addressList>" + addressXml + "</addressList>";
 
-		ResultActions mvcResult = mvc
-				.perform(MockMvcRequestBuilders.post(uri).content(xml).header("type", "addresslist").contentType(MediaType.APPLICATION_XML));
+		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.post(uri).content(xml)
+				.header("type", "addresslist").contentType(MediaType.APPLICATION_XML));
 
 		mvcResult.andExpect(status().isOk());
 	}
 
 	@Test
 	public void testGetAddress() throws Exception {
-		String u= uri + "1";
+		String u = uri + "1";
 		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.get(u).accept(MediaType.TEXT_XML));
 
 		mvcResult.andExpect(content().contentType("text/xml"));
@@ -130,22 +129,17 @@ public class AddrTests {
 	@Test
 	public void testGetFilteredAddresses() throws Exception {
 
-		getFilteredAddresses("firstname", "Helmut");
-		getFilteredAddresses("lastname", "Rotkohl");
-		getFilteredAddresses("email", "hrotk@gmail.com");
+		getFilteredAddresses("Helmut", null, null);
+		getFilteredAddresses("", "Rotkohl", null);
+		getFilteredAddresses("", null, "hrotk@gmail.com");
 	}
 
-	private void getFilteredAddresses(String attr, String value) throws Exception {
-		String searchAddressXml = "<address>\r\n" + "	<" + attr + ">" + value + "</" + attr + ">\r\n"
-				+ "</address>";
-
-		getFilteredAddresses(searchAddressXml);
-	}
-
-	private void getFilteredAddresses(String xml) throws Exception {
-		String u = uri + "search";
-		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.post(u).content(xml)
-				.contentType(MediaType.APPLICATION_XML).accept(MediaType.TEXT_XML));
+	private void getFilteredAddresses(String firstname, String lastname, String email) throws Exception {
+		ResultActions mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+				.param("firstname", firstname)
+				.param("lastname", lastname)
+				.param("email", email)
+				.accept(MediaType.TEXT_XML));
 
 		mvcResult.andExpect(status().isOk());
 		mvcResult.andExpect(content().contentType("text/xml"));
